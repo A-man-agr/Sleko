@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCart } from '@/context/CartContext';
-import { XIcon, TrashIcon, PlusIcon, MinusIcon, ShoppingBagIcon, ArrowRightIcon, CheckCircleIcon } from './Icons';
+import { XIcon, TrashIcon, PlusIcon, MinusIcon, ShoppingBagIcon, ArrowRightIcon, CheckCircleIcon, TruckIcon } from './Icons';
 
 interface CartDrawerProps {
   onOpenCheckout: () => void;
@@ -39,6 +39,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
     setPromoStatus(res);
   };
 
+  const freeShippingThreshold = 100;
+  const freeShippingProgress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+  const amountNeededForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Overlay Backdrop */}
@@ -64,6 +68,31 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
               <XIcon className="w-6 h-6" />
             </button>
           </div>
+
+          {/* Free Shipping Progress Indicator */}
+          {cart.length > 0 && (
+            <div className="px-6 py-3 bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-indigo-100 dark:border-indigo-900/50 space-y-1.5">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <span className="flex items-center gap-1.5">
+                  <TruckIcon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  {amountNeededForFreeShipping > 0 ? (
+                    <>
+                      Add <strong className="text-indigo-600 dark:text-indigo-400 font-mono">${amountNeededForFreeShipping.toFixed(2)}</strong> more for Free Shipping
+                    </>
+                  ) : (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">🎉 You unlocked FREE Express Shipping!</span>
+                  )}
+                </span>
+                <span className="font-mono text-[11px] text-slate-400">{Math.round(freeShippingProgress)}%</span>
+              </div>
+              <div className="w-full h-1.5 bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 transition-all duration-300 rounded-full"
+                  style={{ width: `${freeShippingProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Cart Item List */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">

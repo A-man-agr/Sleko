@@ -148,6 +148,9 @@ function MainApp() {
               searchQuery={filters.searchQuery}
               activeCategory={filters.category}
               activeBrand={filters.brand}
+              onRemoveSearch={() => handleFilterChange({ searchQuery: '' })}
+              onRemoveCategory={() => handleFilterChange({ category: 'all' })}
+              onRemoveBrand={() => handleFilterChange({ brand: 'all' })}
             />
           </div>
         </div>
